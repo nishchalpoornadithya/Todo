@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
-    android:orientation="vertical"
     android:id="@+id/lin1">
     <ImageView
 
@@ -13,14 +12,36 @@
         android:background="#FFFFBB32"
         android:contentDescription="PARAMETERS" />
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Task Name"
-        android:ems="10"
-        android:id="@+id/editText"
+        android:layout_height="34dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor = "@color/blue"
+        android:text="Task Name?"
+        android:id="@+id/textView2"
         android:layout_gravity="center_horizontal" />
 
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</LinearLayout>
+        <EditText
+            android:layout_width="340dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Enter your Task"
+            android:ems="10"
+            android:id="@+id/editText" />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="white"
+            android:id="@+id/imageButton"
+            android:src="@drawable/ic_action_voice"
+            android:layout_column="22" />
+    </TableRow>
+
+
+</TableLayout>
