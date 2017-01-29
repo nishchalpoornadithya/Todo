@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
+    android:background="@color/white"
     android:id="@+id/lin1">
     <ImageView
 
@@ -17,7 +18,7 @@
         android:layout_height="34dp"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:textColor = "@color/blue"
+        android:textColor = "@color/blue1"
         android:text="Task Name?"
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal" />
@@ -37,7 +38,7 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="white"
+            android:background="@color/white"
             android:id="@+id/imageButton"
             android:src="@drawable/ic_action_voice"
             android:layout_column="22" />
