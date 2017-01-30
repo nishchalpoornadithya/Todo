@@ -28,7 +28,7 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:layout_width="340dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:hint="Enter your Task"
@@ -42,6 +42,21 @@
             android:id="@+id/imageButton"
             android:src="@drawable/ic_action_voice"
             android:layout_column="22" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/textView3"
+            android:layout_column="0" />
     </TableRow>
 
 

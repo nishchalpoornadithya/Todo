@@ -1,7 +1,11 @@
 package com.example.nishchal.myapplication;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -13,9 +17,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +40,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                Dialog dialog = new Dialog(MainActivity.this);
-                dialog.setTitle("Parameters");
-                dialog.setContentView(R.layout.dialog1);
-                dialog.show();
+               Intent in1=new Intent(MainActivity.this,dialog1cl.class);
+                MainActivity.this.startActivity(in1);
+
+
+
+
+
 
             }
         });
@@ -64,6 +78,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+
+
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -81,7 +101,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+   public  boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
