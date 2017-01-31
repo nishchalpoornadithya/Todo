@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".dialog1cl"
-            android:theme="@style/Theme.AppCompat.Dialog" >
+            android:theme="@style/AppTheme1" >
         </activity>
     </application>
 
