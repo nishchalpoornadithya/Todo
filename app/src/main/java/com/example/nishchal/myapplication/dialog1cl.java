@@ -20,22 +20,26 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class dialog1cl extends AppCompatActivity {
- private EditText ed;
-     private EditText ed1;
+    private EditText ed;
+    private EditText ed1;
     private EditText ed2;
-    String am_pm="";
+    String dat,st;
+    String am_pm = "";
     String cbText;
-    private static final int av= 0;
+    String tim;
+    private static final int av = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog1);
         ed = (EditText) findViewById(R.id.editText);
-        String st = ed.getText().toString();
+        st = ed.getText().toString();
         ed1 = (EditText) findViewById(R.id.editText2);
         ed2 = (EditText) findViewById(R.id.editText3);
         ImageButton im2 = (ImageButton) findViewById(R.id.imageButton2);
@@ -73,8 +77,9 @@ public class dialog1cl extends AppCompatActivity {
                             am_pm = "AM";
                         else if (mcurrentTime.get(Calendar.AM_PM) == Calendar.PM)
                             am_pm = "PM";
+                        tim = selectedHour + ":" + selectedMinute + " " + am_pm;
+                        ed2.setText(tim);
 
-                        ed2.setText(selectedHour + ":" + selectedMinute +" "+am_pm);
                     }
                 }, hour, minute, false);
                 mTimePicker.setTitle("Select Time");
@@ -82,28 +87,24 @@ public class dialog1cl extends AppCompatActivity {
 
             }
         });
-        CheckBox cb=(CheckBox)findViewById(R.id.checkBox);
-        if(cb.isChecked())
-        {
-            cbText="yes";
-        }
-        else
-        {
-            cbText="no";
+        CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
+        if (cb.isChecked()) {
+            cbText = "yes";
+        } else {
+            cbText = "no";
         }
 
 
-        Button b1=(Button)findViewById(R.id.setTaskButton);
-        b1.setOnClickListener(new View.OnClickListener(){
-                                  public void onClick(View view)
-                                  {
-                                      Intent in2=new Intent(dialog1cl.this,storage.class);
-                                      dialog1cl.this.startActivity(in2);
+        Button b1 = (Button) findViewById(R.id.setTaskButton);
+        b1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent in2 = new Intent(dialog1cl.this, storage.class);
+                dialog1cl.this.startActivity(in2);
 
 
-                                  }
+            }
 
-                                  });
+        });
 
     }
 
@@ -124,31 +125,24 @@ public class dialog1cl extends AppCompatActivity {
     };
 
 
-
-
-    public void promptspeech()
-    {
-        Intent i=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    public void promptspeech() {
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Name your task!");
-        startActivityForResult(i,av );
+        i.putExtra(RecognizerIntent.EXTRA_PROMPT, "Name your task!");
+        startActivityForResult(i, av);
         try {
 
-        }
-        catch(ActivityNotFoundException a)
-        {
-            Toast.makeText(dialog1cl.this,"Sorry! Your device doesnt support speech Language",Toast.LENGTH_LONG).show();
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(dialog1cl.this, "Sorry! Your device doesnt support speech Language", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void onActivityResult(int request_code , int result_code, Intent i)
-    {
-             if(request_code ==av && result_code==RESULT_OK)
-             {
-                ArrayList<String> result=i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                ed.setText(result.get(0));
-             }
+    public void onActivityResult(int request_code, int result_code, Intent i) {
+        if (request_code == av && result_code == RESULT_OK) {
+            ArrayList<String> result = i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            ed.setText(result.get(0));
+        }
         super.onActivityResult(request_code, result_code, i);
 
     }
@@ -158,7 +152,20 @@ public class dialog1cl extends AppCompatActivity {
 
         String myFormat = "dd/MM/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
+        dat = (myCalendar.getTime()).toString();
         ed1.setText(sdf.format(myCalendar.getTime()));
+
+    }
+    public String task_name(){
+        return st;
+    }
+    public String task_date(){
+        return (dat);
+    }
+    public String task_time(){
+        return tim;
+    }
+    public String notification(){
+        return cbText;
     }
 }
