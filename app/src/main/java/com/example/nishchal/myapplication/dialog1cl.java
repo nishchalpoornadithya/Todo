@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class dialog1cl extends AppCompatActivity {
     String am_pm = "";
     String cbText;
     String tim;
+    Context ctx=this;
+    DatabaseOperations mydb;
     private static final int av = 0;
 
     @Override
@@ -98,8 +101,9 @@ public class dialog1cl extends AppCompatActivity {
         Button b1 = (Button) findViewById(R.id.setTaskButton);
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent in2 = new Intent(dialog1cl.this, storage.class);
-                dialog1cl.this.startActivity(in2);
+               mydb=new DatabaseOperations(ctx);
+                mydb.putInformation(mydb,st,dat,tim,cbText);
+                Toast.makeText(dialog1cl.this, "Task Created", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -156,7 +160,7 @@ public class dialog1cl extends AppCompatActivity {
         ed1.setText(sdf.format(myCalendar.getTime()));
 
     }
-    public String task_name(){
+   /* public String task_name(){
         return st;
     }
     public String task_date(){
@@ -166,6 +170,5 @@ public class dialog1cl extends AppCompatActivity {
         return tim;
     }
     public String notification(){
-        return cbText;
+        return cbText;*/
     }
-}
