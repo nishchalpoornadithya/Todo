@@ -69,7 +69,7 @@ public class dialog1cl extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int hour = mcurrentTime.get(Calendar.HOUR);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
 
                 TimePickerDialog mTimePicker;
@@ -104,6 +104,8 @@ public class dialog1cl extends AppCompatActivity {
                mydb=new DatabaseOperations(ctx);
                 mydb.putInformation(mydb,st,dat,tim,cbText);
                 Toast.makeText(dialog1cl.this, "Task Created", Toast.LENGTH_SHORT).show();
+                Intent in2=new Intent(dialog1cl.this,MainActivity.class);
+                dialog1cl.this.startActivity(in2);
 
 
             }
@@ -160,15 +162,5 @@ public class dialog1cl extends AppCompatActivity {
         ed1.setText(sdf.format(myCalendar.getTime()));
 
     }
-   /* public String task_name(){
-        return st;
-    }
-    public String task_date(){
-        return (dat);
-    }
-    public String task_time(){
-        return tim;
-    }
-    public String notification(){
-        return cbText;*/
+
     }

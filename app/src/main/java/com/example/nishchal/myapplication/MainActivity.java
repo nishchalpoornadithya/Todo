@@ -3,11 +3,13 @@ package com.example.nishchal.myapplication;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.Image;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,14 +28,25 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-
+    DatabaseOperations mydb1;
+    private ArrayList<dataretrieve>  arrayListToDo = new ArrayList<dataretrieve>();
+ private RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Cursor res=mydb1.getAlldata();
+        while (res.moveToNext()) {
+
+            arrayListToDo.add(new dataretrieve(res.getString(res.getColumnIndex("NAME")),res.getString(res.getColumnIndex("DATE")),
+                    res.getString(res.getColumnIndex("TIME")),res.getString(res.getColumnIndex("NOTE"))));
+
+        }
+
+
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
