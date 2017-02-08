@@ -42,19 +42,10 @@ public class dialog1cl extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog1);
         ed = (EditText) findViewById(R.id.editText);
-        st = ed.getText().toString();
+
         ed1 = (EditText) findViewById(R.id.editText2);
         ed2 = (EditText) findViewById(R.id.editText3);
-        ImageButton im2 = (ImageButton) findViewById(R.id.imageButton2);
-        im2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                new DatePickerDialog(dialog1cl.this, date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
-
-            }
-        });
 
         ImageButton im = (ImageButton) findViewById(R.id.imageButton);
         im.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +54,21 @@ public class dialog1cl extends AppCompatActivity {
                 promptspeech();
             }
         });
+
+
+        ImageButton im2 = (ImageButton) findViewById(R.id.imageButton2);
+
+        im2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                st = ed.getText().toString();
+                new DatePickerDialog(dialog1cl.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+
+            }
+        });
+
 
         ImageButton im3 = (ImageButton) findViewById(R.id.imageButton3);
         im3.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +153,7 @@ public class dialog1cl extends AppCompatActivity {
     public void onActivityResult(int request_code, int result_code, Intent i) {
         if (request_code == av && result_code == RESULT_OK) {
             ArrayList<String> result = i.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
             ed.setText(result.get(0));
         }
         super.onActivityResult(request_code, result_code, i);

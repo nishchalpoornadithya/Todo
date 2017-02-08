@@ -2,6 +2,7 @@ package com.example.nishchal.myapplication;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.Image;
@@ -9,6 +10,9 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,30 +25,62 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    DatabaseOperations mydb1;
-    private ArrayList<dataretrieve>  arrayListToDo = new ArrayList<dataretrieve>();
- private RecyclerView recyclerView;
+
+    //private ArrayList<dataretrieve>  arrayListToDo = new ArrayList<dataretrieve>();
+
+
+
+
+    Context ctx;
+
+    private CustomAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ListView l1;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        DatabaseOperations mydb1=new DatabaseOperations(this);
+      Cursor res= mydb1.getAlldata();
 
-        Cursor res=mydb1.getAlldata();
-        while (res.moveToNext()) {
+         ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
 
-            arrayListToDo.add(new dataretrieve(res.getString(res.getColumnIndex("NAME")),res.getString(res.getColumnIndex("DATE")),
-                    res.getString(res.getColumnIndex("TIME")),res.getString(res.getColumnIndex("NOTE"))));
+        //StringBuffer sb=new StringBuffer();
 
-        }
+            while (res.moveToNext()) {
+                dataretrieve obj=new dataretrieve();
+                obj.setName(res.getString(0));
+                obj.setDate(res.getString(1));
+                obj.setTime(res.getString(2));
+                obj.setNot(res.getString(3));
+                arrayListToDo.add(obj);
+         /*  sb.append("NAME :"+arrayListToDo.get(0).getName()+"\n");
+                sb.append("date :"+arrayListToDo.get(0).getDate()+"\n");
+                sb.append("time :"+arrayListToDo.get(0).getTime()+"\n");
+                sb.append("not :"+arrayListToDo.get(0).getNot()+"\n\n");*/
+
+            }
+       l1=(ListView)findViewById(R.id.displistview);
+       adapter=new CustomAdapter(this,arrayListToDo);
+        l1.setAdapter(adapter);
+
+
+        //showmsg("data",sb.toString());
+
+
+
 
 
 
@@ -73,6 +109,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void showmsg(String t,String m ){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(t);
+        builder.setMessage(m);
+        builder.show();
     }
 
     @Override
