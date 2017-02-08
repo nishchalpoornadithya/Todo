@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity
 
 
     Context ctx;
+    RecyclerView mRecyclerView;
+    RecyclerView.LayoutManager mLayoutManager;
 
-    private CustomAdapter adapter;
+    private RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +74,23 @@ public class MainActivity extends AppCompatActivity
                 sb.append("not :"+arrayListToDo.get(0).getNot()+"\n\n");*/
 
             }
-       l1=(ListView)findViewById(R.id.displistview);
-       adapter=new CustomAdapter(this,arrayListToDo);
-        l1.setAdapter(adapter);
+
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        // specify an adapter (see also next example)
+        mAdapter = new CustomAdapter(arrayListToDo);
+        mRecyclerView.setAdapter(mAdapter);
 
 
         //showmsg("data",sb.toString());

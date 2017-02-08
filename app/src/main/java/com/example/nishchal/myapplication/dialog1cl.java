@@ -34,6 +34,7 @@ public class dialog1cl extends AppCompatActivity {
     String cbText;
     String tim;
     Context ctx=this;
+    int i=0;
     DatabaseOperations mydb;
     private static final int av = 0;
 
@@ -108,7 +109,10 @@ public class dialog1cl extends AppCompatActivity {
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                mydb=new DatabaseOperations(ctx);
-                mydb.putInformation(mydb,st,dat,tim,cbText);
+                i++;
+                String x=""+1;
+                mydb.putInformation(mydb,x,st,dat,tim,cbText);
+                x="";
                 Toast.makeText(dialog1cl.this, "Task Created", Toast.LENGTH_SHORT).show();
                 Intent in2=new Intent(dialog1cl.this,MainActivity.class);
                 dialog1cl.this.startActivity(in2);
