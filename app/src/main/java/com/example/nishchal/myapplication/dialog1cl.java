@@ -29,12 +29,12 @@ public class dialog1cl extends AppCompatActivity {
     private EditText ed;
     private EditText ed1;
     private EditText ed2;
-    String dat,st;
+    String dat, st;
     String am_pm = "";
     String cbText;
     String tim;
-    Context ctx=this;
-    int i=0;
+    Context ctx = this;
+
     DatabaseOperations mydb;
     private static final int av = 0;
 
@@ -108,13 +108,13 @@ public class dialog1cl extends AppCompatActivity {
         Button b1 = (Button) findViewById(R.id.setTaskButton);
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-               mydb=new DatabaseOperations(ctx);
-                i++;
-                String x=""+1;
-                mydb.putInformation(mydb,x,st,dat,tim,cbText);
-                x="";
+                mydb = new DatabaseOperations(ctx);
+
+
+                mydb.putInformation(mydb, st, dat, tim, cbText);
+
                 Toast.makeText(dialog1cl.this, "Task Created", Toast.LENGTH_SHORT).show();
-                Intent in2=new Intent(dialog1cl.this,MainActivity.class);
+                Intent in2 = new Intent(dialog1cl.this, MainActivity.class);
                 dialog1cl.this.startActivity(in2);
 
 
@@ -174,4 +174,4 @@ public class dialog1cl extends AppCompatActivity {
 
     }
 
-    }
+}

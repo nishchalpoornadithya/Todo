@@ -3,8 +3,10 @@ package com.example.nishchal.myapplication;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.Image;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -14,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,10 +38,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    //private ArrayList<dataretrieve>  arrayListToDo = new ArrayList<dataretrieve>();
-
-
-
 
     Context ctx;
     RecyclerView mRecyclerView;
@@ -49,31 +48,33 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        ListView l1;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DatabaseOperations mydb1=new DatabaseOperations(this);
-      Cursor res= mydb1.getAlldata();
+        DatabaseOperations mydb1 = new DatabaseOperations(this);
+        Cursor res = mydb1.getAlldata();
+        final DatabaseOperations db = new DatabaseOperations(this);
 
-         ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
+       final ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
 
-        //StringBuffer sb=new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-            while (res.moveToNext()) {
-                dataretrieve obj=new dataretrieve();
-                obj.setName(res.getString(0));
-                obj.setDate(res.getString(1));
-                obj.setTime(res.getString(2));
-                obj.setNot(res.getString(3));
-                arrayListToDo.add(obj);
-         /*  sb.append("NAME :"+arrayListToDo.get(0).getName()+"\n");
-                sb.append("date :"+arrayListToDo.get(0).getDate()+"\n");
-                sb.append("time :"+arrayListToDo.get(0).getTime()+"\n");
-                sb.append("not :"+arrayListToDo.get(0).getNot()+"\n\n");*/
+        while (res.moveToNext()) {
+            dataretrieve obj = new dataretrieve();
+            obj.setId(res.getInt(0));
+            obj.setName(res.getString(1));
+            obj.setDate(res.getString(2));
+            obj.setTime(res.getString(3));
+            obj.setNot(res.getString(4));
+            arrayListToDo.add(obj);
+         /*  sb.append("NAME :"+arrayListToDo.get(0).getId()+"\n");
+                sb.append("date :"+arrayListToDo.get(1).getDate()+"\n");
+                sb.append("time :"+arrayListToDo.get(2).getTime()+"\n");
+                sb.append("not :"+arrayListToDo.get(3).getNot()+"\n\n");*/
 
-            }
+        }
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -92,13 +93,46 @@ public class MainActivity extends AppCompatActivity
         mAdapter = new CustomAdapter(arrayListToDo);
         mRecyclerView.setAdapter(mAdapter);
 
+        final CustomAdapter cv1 = new CustomAdapter(arrayListToDo);
+        //  showmsg("data",sb.toString());
+        // beautiful piece of code
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-        //showmsg("data",sb.toString());
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition(); //get position which is swipe
 
+                if (direction == ItemTouchHelper.RIGHT) {    //if swipe right
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); //alert for confirm to delete
+                    builder.setMessage("Are you sure to delete?");    //set message
 
+                    builder.setPositiveButton("REMOVE", new DialogInterface.OnClickListener() { //when click on DELETE
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mAdapter.notifyItemRemoved(position);    //item removed from recylcerview
+                            db.del(arrayListToDo.get(position).getId()); //query for delete
+                            cv1.rem(position);  //then remove item
 
-
+                            return;
+                        }
+                    }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {  //not removing items if cancel is done
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mAdapter.notifyItemRemoved(position);    //notifies the RecyclerView Adapter that data in adapter has been removed at a particular position.
+                            mAdapter.notifyItemRangeChanged(position, mAdapter.getItemCount());   //notifies the RecyclerView Adapter that positions of element in adapter has been changed from position(removed element index to end of list), please update it.
+                            return;
+                        }
+                    }).show();  //show alert dialog
+                }
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView); //set swipe to recylcerview
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -106,12 +140,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-               Intent in1=new Intent(MainActivity.this,dialog1cl.class);
+                Intent in1 = new Intent(MainActivity.this, dialog1cl.class);
                 MainActivity.this.startActivity(in1);
-
-
-
-
 
 
             }
@@ -119,7 +149,7 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -127,8 +157,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void showmsg(String t,String m ){
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+    public void showmsg(String t, String m) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle(t);
         builder.setMessage(m);
@@ -153,11 +183,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -175,7 +200,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-   public  boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
