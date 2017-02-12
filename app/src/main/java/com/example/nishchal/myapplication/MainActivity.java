@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -28,20 +30,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-
-    Context ctx;
+ImageView img; StringBuilder total;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
+    Context ctx;String user,email;
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
+     TextView tv1;
+    TextView tv2;
 
     private RecyclerView.Adapter mAdapter;
 
@@ -51,10 +63,18 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ctx = getApplicationContext();
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DatabaseOperations mydb1 = new DatabaseOperations(this);
         Cursor res = mydb1.getAlldata();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = mNavigationView.getHeaderView(0);
+        final  TextView tv1=(TextView)header.findViewById(R.id.tv1);
+        final TextView tv2=(TextView)header.findViewById(R.id.tv2);
         final DatabaseOperations db = new DatabaseOperations(this);
 
        final ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
@@ -75,6 +95,33 @@ public class MainActivity extends AppCompatActivity
                 sb.append("not :"+arrayListToDo.get(3).getNot()+"\n\n");*/
 
         }
+        try {
+            FileInputStream inputStream = openFileInput("userI");
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            total = new StringBuilder();
+            String line;
+            while ((line = r.readLine()) != null) {
+                total.append(line);
+            }
+            r.close();
+            inputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int i=0;String s1="",s2="";
+        while(i<=total.length()){
+            if(total.charAt(i)=='0'){
+                s1=total.substring(0,i);
+                s2=total.substring(i+1,total.length());
+                break;
+            }
+            i++;
+        }
+        tv1.setText(s1);
+        tv2.setText(s2);
+
+
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -133,6 +180,59 @@ public class MainActivity extends AppCompatActivity
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView); //set swipe to recylcerview
+
+
+         img=(ImageView)header.findViewById(R.id.imageView);
+        img.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                final AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+
+                final LinearLayout layout = new LinearLayout(MainActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final TextView tx1=new TextView(MainActivity.this);
+                TextView tx2=new TextView(MainActivity.this);
+                tx1.setText("User name:");
+                tx2.setText("email:");
+
+                tx1.setTextColor(Color.BLACK);
+                tx2.setTextColor(Color.BLACK);
+                final EditText i1 = new EditText(MainActivity.this);
+                final EditText i2 = new EditText(MainActivity.this);
+                layout.addView(tx1);
+                layout.addView(i1);
+                layout.addView(tx2);
+                layout.addView(i2);
+
+                alert.setView(layout);
+               alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String u1,u2;
+                        u1=i1.getText().toString();
+                        u2=i2.getText().toString();
+
+
+                        user = u1+"0"+u2;
+
+                        try {
+                            FileOutputStream outputStream = openFileOutput("userI", Context.MODE_PRIVATE);
+                            outputStream.write(user.getBytes());
+
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        tv1.setText(u1);
+                        tv2.setText(u2);
+
+
+
+                    }
+                });
+
+                alert.show();
+            }
+        });
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -198,23 +298,20 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.comp_task) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.incomp_task) {
 
-        } else if (id == R.id.nav_slideshow) {
+        }
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        else if (id == R.id.abt_dev) {
 
         }
 

@@ -167,9 +167,9 @@ public class dialog1cl extends AppCompatActivity {
 
     private void updateLabel() {
 
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "EEE, dd MMM yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        dat = (myCalendar.getTime()).toString();
+        dat = sdf.format(myCalendar.getTime()).toString();
         ed1.setText(sdf.format(myCalendar.getTime()));
 
     }
