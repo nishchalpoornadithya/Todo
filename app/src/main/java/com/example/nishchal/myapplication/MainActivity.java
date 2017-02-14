@@ -46,7 +46,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-ImageView img; StringBuilder total;
+ImageView img;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     Context ctx;String user,email;
@@ -65,7 +65,7 @@ ImageView img; StringBuilder total;
         setContentView(R.layout.activity_main);
         ctx = getApplicationContext();
 
-
+        StringBuilder total = new StringBuilder("user0sample@xyz.com");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DatabaseOperations mydb1 = new DatabaseOperations(this);
@@ -79,7 +79,7 @@ ImageView img; StringBuilder total;
 
        final ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
 
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer("User0sample@xyz.com");
 
         while (res.moveToNext()) {
             dataretrieve obj = new dataretrieve();
@@ -98,7 +98,7 @@ ImageView img; StringBuilder total;
         try {
             FileInputStream inputStream = openFileInput("userI");
             BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-            total = new StringBuilder();
+
             String line;
             while ((line = r.readLine()) != null) {
                 total.append(line);
@@ -306,7 +306,11 @@ ImageView img; StringBuilder total;
         int id = item.getItemId();
 
         if (id == R.id.comp_task) {
-            // Handle the camera action
+            Intent in3=new Intent(MainActivity.this,comp.class);
+            MainActivity.this.startActivity(in3);
+
+
+
         } else if (id == R.id.incomp_task) {
 
         }
