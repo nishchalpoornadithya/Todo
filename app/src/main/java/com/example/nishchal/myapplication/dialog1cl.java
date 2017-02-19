@@ -83,11 +83,13 @@ public class dialog1cl extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(dialog1cl.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        if (mcurrentTime.get(Calendar.AM_PM) == Calendar.AM)
+                       if (selectedHour<12)
                             am_pm = "AM";
-                        else if (mcurrentTime.get(Calendar.AM_PM) == Calendar.PM)
-                            am_pm = "PM";
-                        tim = selectedHour + ":" + selectedMinute + " " + am_pm;
+                        else {
+                           selectedHour=selectedHour-12;
+                           am_pm = "PM";
+                       }
+                        tim = selectedHour + ":" + selectedMinute+" "+am_pm ;
                         ed2.setText(tim);
 
                     }

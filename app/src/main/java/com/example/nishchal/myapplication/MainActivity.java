@@ -57,6 +57,8 @@ ImageView img;
 
     private RecyclerView.Adapter mAdapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -137,10 +139,13 @@ ImageView img;
 
 
         // specify an adapter (see also next example)
-        mAdapter = new CustomAdapter(arrayListToDo);
+      dataretrieve df=new dataretrieve();
+
+        mAdapter = new CustomAdapter(arrayListToDo,"y");
         mRecyclerView.setAdapter(mAdapter);
 
-        final CustomAdapter cv1 = new CustomAdapter(arrayListToDo);
+
+        final CustomAdapter cv1 = new CustomAdapter(arrayListToDo,"y");
         //  showmsg("data",sb.toString());
         // beautiful piece of code
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -312,6 +317,8 @@ ImageView img;
 
 
         } else if (id == R.id.incomp_task) {
+           Intent in4=new Intent(MainActivity.this,incomp.class);
+            MainActivity.this.startActivity(in4);
 
         }
 
