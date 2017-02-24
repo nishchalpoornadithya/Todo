@@ -28,5 +28,8 @@
 <activity
     android:name=".comp"
     android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".incomp"
+            android:theme="@style/AppTheme"></activity>
     </application>
 </manifest>
