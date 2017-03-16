@@ -52,7 +52,7 @@ ImageView img;
     Context ctx;String user,email;
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
-     TextView tv1;
+    TextView tv1;
     TextView tv2;
 
     private RecyclerView.Adapter mAdapter;
