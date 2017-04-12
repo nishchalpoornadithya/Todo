@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by Nishchal on 16-02-2017.
  */
-public class incomp extends AppCompatActivity {
+public class Incompleted_tasks extends AppCompatActivity {
     RecyclerView mRecyclerView1;
     RecyclerView.LayoutManager mLayoutManager1;
     private RecyclerView.Adapter mAdapter1;
@@ -24,14 +24,14 @@ public class incomp extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.complay);
+        setContentView(R.layout.recyclerviewlayout);
         DatabaseOperations mydb1 = new DatabaseOperations(this);
         Cursor res = mydb1.getAlldata2();
         final DatabaseOperations db = new DatabaseOperations(this);
-        final ArrayList<dataretrieve> arrayListToDo1 = new ArrayList<dataretrieve>();
+        final ArrayList<Dataretrieve> arrayListToDo1 = new ArrayList<Dataretrieve>();
 
         while (res.moveToNext()) {
-            dataretrieve obj = new dataretrieve();
+            Dataretrieve obj = new Dataretrieve();
             obj.setId(res.getInt(0));
             obj.setName(res.getString(1));
             obj.setDate(res.getString(2));
@@ -64,7 +64,7 @@ public class incomp extends AppCompatActivity {
 
                 if (direction == ItemTouchHelper.RIGHT) {    //if swipe right
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(incomp.this); //alert for confirm to delete
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Incompleted_tasks.this); //alert for confirm to delete
                     builder.setMessage("Are you sure to delete?");
                     builder.setPositiveButton("REMOVE", new DialogInterface.OnClickListener() { //when click on DELETE
                         @Override

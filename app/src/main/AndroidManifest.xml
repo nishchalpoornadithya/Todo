@@ -22,14 +22,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialog1cl"
+            android:name=".Dialog_specifications"
             android:theme="@style/AppTheme1"></activity>
 
 <activity
-    android:name=".comp"
+    android:name=".Completed_tasks"
     android:theme="@style/AppTheme"></activity>
         <activity
-            android:name=".incomp"
+            android:name=".Incompleted_tasks"
             android:theme="@style/AppTheme"></activity>
+
+    <activity
+        android:name=".About"
+        android:theme="@style/AppTheme"></activity>
+        <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>﻿
+
+        <receiver android:name=".NotificationReciever"/>
+
     </application>
 </manifest>

@@ -2,18 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-
+        <item android:title="Stats">
+<menu>
         <item
             android:id="@+id/comp_task"
-            android:src="@drawable/ic_menu_camera"
+
             android:title="Completed Tasks" />
         <item
             android:id="@+id/incomp_task"
-            android:icon="@drawable/ic_action_incomp"
+
             android:title="Incompleted Tasks" />
+</menu>
+        </item>
 
 
-    </group>
+
 
     <item android:title="Communicate">
         <menu>
@@ -24,5 +27,6 @@
 
         </menu>
     </item>
+    </group>
 
 </menu>

@@ -1,24 +1,23 @@
 package com.example.nishchal.myapplication;
 
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,34 +28,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-ImageView img;
+    ImageView img;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    Context ctx;String user,email;
+    String user, email;
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
     TextView tv1;
     TextView tv2;
-
+    int flag = 0;
+    Intent alarmIntent;
+    PendingIntent pendingIntent;
+    public AlarmManager alarmManager;
     private RecyclerView.Adapter mAdapter;
-
 
 
     @Override
@@ -64,10 +61,11 @@ ImageView img;
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ctx = getApplicationContext();
+        setContentView(R.layout.mainactivity);
 
-        StringBuilder total = new StringBuilder("user0sample@xyz.com");
+        final DatabaseOperations db = new DatabaseOperations(this);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DatabaseOperations mydb1 = new DatabaseOperations(this);
@@ -75,16 +73,18 @@ ImageView img;
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
-        final  TextView tv1=(TextView)header.findViewById(R.id.tv1);
-        final TextView tv2=(TextView)header.findViewById(R.id.tv2);
-        final DatabaseOperations db = new DatabaseOperations(this);
+        final TextView tv1 = (TextView) header.findViewById(R.id.tv1);
+        final TextView tv2 = (TextView) header.findViewById(R.id.tv2);
 
-       final ArrayList<dataretrieve> arrayListToDo = new ArrayList<dataretrieve>();
+            res = db.sort_alpha();
 
-        StringBuffer sb = new StringBuffer("User0sample@xyz.com");
+
+        final ArrayList<Dataretrieve> arrayListToDo = new ArrayList<Dataretrieve>();
+
+        StringBuffer sb = new StringBuffer("");
 
         while (res.moveToNext()) {
-            dataretrieve obj = new dataretrieve();
+            Dataretrieve obj = new Dataretrieve();
             obj.setId(res.getInt(0));
             obj.setName(res.getString(1));
             obj.setDate(res.getString(2));
@@ -97,8 +97,10 @@ ImageView img;
                 sb.append("not :"+arrayListToDo.get(3).getNot()+"\n\n");*/
 
         }
+        StringBuilder total = new StringBuilder("");
         try {
-            FileInputStream inputStream = openFileInput("userI");
+            FileInputStream inputStream = openFileInput("user");
+
             BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
@@ -111,20 +113,18 @@ ImageView img;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int i=0;String s1="",s2="";
-        while(i<=total.length()){
-            if(total.charAt(i)=='0'){
-                s1=total.substring(0,i);
-                s2=total.substring(i+1,total.length());
+        int i = 0;
+        String s1 = "", s2 = "";
+        while (i < total.length()) {
+            if (total.charAt(i) == '0') {
+                s1 = total.substring(0, i);
+                s2 = total.substring(i + 1, total.length());
                 break;
             }
             i++;
         }
         tv1.setText(s1);
         tv2.setText(s2);
-
-
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -139,15 +139,17 @@ ImageView img;
 
 
         // specify an adapter (see also next example)
-      dataretrieve df=new dataretrieve();
+        Dataretrieve df = new Dataretrieve();
 
-        mAdapter = new CustomAdapter(arrayListToDo,"y");
+        mAdapter = new CustomAdapter(arrayListToDo, "y");
         mRecyclerView.setAdapter(mAdapter);
 
 
-        final CustomAdapter cv1 = new CustomAdapter(arrayListToDo,"y");
+        final CustomAdapter cv1 = new CustomAdapter(arrayListToDo, "y");
         //  showmsg("data",sb.toString());
         // beautiful piece of code
+
+
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -167,7 +169,7 @@ ImageView img;
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mAdapter.notifyItemRemoved(position);    //item removed from recylcerview
-                            db.del(arrayListToDo.get(position).getId()); //query for delete
+                            db.del(arrayListToDo.get(position).getId());
                             cv1.rem(position);  //then remove item
 
                             return;
@@ -186,16 +188,16 @@ ImageView img;
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView); //set swipe to recylcerview
 
-
-         img=(ImageView)header.findViewById(R.id.imageView);
+        db.close();
+        img = (ImageView) header.findViewById(R.id.imageView);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 final AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
 
                 final LinearLayout layout = new LinearLayout(MainActivity.this);
                 layout.setOrientation(LinearLayout.VERTICAL);
-                final TextView tx1=new TextView(MainActivity.this);
-                TextView tx2=new TextView(MainActivity.this);
+                final TextView tx1 = new TextView(MainActivity.this);
+                TextView tx2 = new TextView(MainActivity.this);
                 tx1.setText("User name:");
                 tx2.setText("email:");
 
@@ -209,18 +211,18 @@ ImageView img;
                 layout.addView(i2);
 
                 alert.setView(layout);
-               alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String u1,u2;
-                        u1=i1.getText().toString();
-                        u2=i2.getText().toString();
+                        String u1, u2;
+                        u1 = i1.getText().toString();
+                        u2 = i2.getText().toString();
 
 
-                        user = u1+"0"+u2;
+                        user = u1 + '0' + u2;
 
                         try {
-                            FileOutputStream outputStream = openFileOutput("userI", Context.MODE_PRIVATE);
+                            FileOutputStream outputStream = openFileOutput("user", Context.MODE_PRIVATE);
                             outputStream.write(user.getBytes());
 
                             outputStream.close();
@@ -231,7 +233,6 @@ ImageView img;
                         tv2.setText(u2);
 
 
-
                     }
                 });
 
@@ -239,18 +240,29 @@ ImageView img;
             }
         });
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,5);
+        calendar.set(Calendar.MINUTE,12);
+        calendar.set(Calendar.AM_PM,Calendar.PM);
+        Intent intent = new Intent(getApplicationContext(),NotificationReciever.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),alarmManager.INTERVAL_DAY,pendingIntent);
 
+        Log.d("yess","lk");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent in1 = new Intent(MainActivity.this, dialog1cl.class);
+                Intent in1 = new Intent(MainActivity.this, Dialog_specifications.class);
                 MainActivity.this.startActivity(in1);
 
 
             }
         });
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -260,15 +272,10 @@ ImageView img;
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
-    public void showmsg(String t, String m) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(t);
-        builder.setMessage(m);
-        builder.show();
-    }
+
 
     @Override
     public void onBackPressed() {
@@ -311,24 +318,20 @@ ImageView img;
         int id = item.getItemId();
 
         if (id == R.id.comp_task) {
-            Intent in3=new Intent(MainActivity.this,comp.class);
+            Intent in3 = new Intent(MainActivity.this, Completed_tasks.class);
             MainActivity.this.startActivity(in3);
 
-
-
         } else if (id == R.id.incomp_task) {
-           Intent in4=new Intent(MainActivity.this,incomp.class);
+            Intent in4 = new Intent(MainActivity.this, Incompleted_tasks.class);
             MainActivity.this.startActivity(in4);
 
         }
-
-        else if (id == R.id.abt_dev) {
-
+        else if(id==R.id.abt_dev){
+            Intent in5=new Intent(MainActivity.this,About.class);
+            MainActivity.this.startActivity(in5);
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
-
     }
+
+
 }

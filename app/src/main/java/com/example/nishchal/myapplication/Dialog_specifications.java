@@ -1,6 +1,5 @@
 package com.example.nishchal.myapplication;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
@@ -21,11 +20,9 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class dialog1cl extends AppCompatActivity {
+public class Dialog_specifications extends AppCompatActivity {
     private EditText ed;
     private EditText ed1;
     private EditText ed2;
@@ -41,7 +38,7 @@ public class dialog1cl extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog1);
+        setContentView(R.layout.dialog_specifications);
         ed = (EditText) findViewById(R.id.editText);
 
         ed1 = (EditText) findViewById(R.id.editText2);
@@ -62,7 +59,7 @@ public class dialog1cl extends AppCompatActivity {
         im2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 st = ed.getText().toString();
-                new DatePickerDialog(dialog1cl.this, date, myCalendar
+                new DatePickerDialog(Dialog_specifications.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -80,7 +77,7 @@ public class dialog1cl extends AppCompatActivity {
                 int minute = mcurrentTime.get(Calendar.MINUTE);
 
                 TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(dialog1cl.this, new TimePickerDialog.OnTimeSetListener() {
+                mTimePicker = new TimePickerDialog(Dialog_specifications.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                        if (selectedHour<12)
@@ -115,9 +112,9 @@ public class dialog1cl extends AppCompatActivity {
 
                 mydb.putInformation(mydb, st, dat, tim, cbText);
 
-                Toast.makeText(dialog1cl.this, "Task Created", Toast.LENGTH_SHORT).show();
-                Intent in2 = new Intent(dialog1cl.this, MainActivity.class);
-                dialog1cl.this.startActivity(in2);
+                Toast.makeText(Dialog_specifications.this, "Task Created", Toast.LENGTH_SHORT).show();
+                Intent in2 = new Intent(Dialog_specifications.this, MainActivity.class);
+                Dialog_specifications.this.startActivity(in2);
 
 
             }
@@ -152,7 +149,7 @@ public class dialog1cl extends AppCompatActivity {
         try {
 
         } catch (ActivityNotFoundException a) {
-            Toast.makeText(dialog1cl.this, "Sorry! Your device doesnt support speech Language", Toast.LENGTH_LONG).show();
+            Toast.makeText(Dialog_specifications.this, "Sorry! Your device doesnt support speech Language", Toast.LENGTH_LONG).show();
         }
     }
 
