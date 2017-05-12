@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -42,9 +44,11 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     ImageView img;
+    Cursor res;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     String user, email;
+    String am_pm = "";
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
     TextView tv1;
@@ -54,8 +58,12 @@ public class MainActivity extends AppCompatActivity
     PendingIntent pendingIntent;
     public AlarmManager alarmManager;
     private RecyclerView.Adapter mAdapter;
+    int hour1;
+    int minute1;
 
+    Dataretrieve m = new Dataretrieve();
 
+    //Oncreation of recycler view and card view
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -69,34 +77,41 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DatabaseOperations mydb1 = new DatabaseOperations(this);
-        Cursor res = mydb1.getAlldata();
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
         final TextView tv1 = (TextView) header.findViewById(R.id.tv1);
         final TextView tv2 = (TextView) header.findViewById(R.id.tv2);
 
-            res = db.sort_alpha();
+
+        res = db.sort_alpha();
 
 
         final ArrayList<Dataretrieve> arrayListToDo = new ArrayList<Dataretrieve>();
 
         StringBuffer sb = new StringBuffer("");
 
-        while (res.moveToNext()) {
-            Dataretrieve obj = new Dataretrieve();
-            obj.setId(res.getInt(0));
-            obj.setName(res.getString(1));
-            obj.setDate(res.getString(2));
-            obj.setTime(res.getString(3));
-            obj.setNot(res.getString(4));
-            arrayListToDo.add(obj);
+
+        try {
+            while (res.moveToNext()) {
+                Dataretrieve obj = new Dataretrieve();
+                obj.setId(res.getInt(0));
+                obj.setName(res.getString(1));
+                obj.setDate(res.getString(2));
+                obj.setTime(res.getString(3));
+                obj.setNot(res.getString(4));
+                arrayListToDo.add(obj);
+            }
          /*  sb.append("NAME :"+arrayListToDo.get(0).getId()+"\n");
                 sb.append("date :"+arrayListToDo.get(1).getDate()+"\n");
                 sb.append("time :"+arrayListToDo.get(2).getTime()+"\n");
                 sb.append("not :"+arrayListToDo.get(3).getNot()+"\n\n");*/
 
+        } finally {
+            res.close();
         }
+
         StringBuilder total = new StringBuilder("");
         try {
             FileInputStream inputStream = openFileInput("user");
@@ -188,7 +203,7 @@ public class MainActivity extends AppCompatActivity
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView); //set swipe to recylcerview
 
-        db.close();
+
         img = (ImageView) header.findViewById(R.id.imageView);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -240,16 +255,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,5);
-        calendar.set(Calendar.MINUTE,12);
-        calendar.set(Calendar.AM_PM,Calendar.PM);
-        Intent intent = new Intent(getApplicationContext(),NotificationReciever.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),alarmManager.INTERVAL_DAY,pendingIntent);
 
-        Log.d("yess","lk");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,7 +269,6 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -275,7 +280,23 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //Sets Notification
+    public void setnotif(int selectedHour, int selectedMinute) {
+        Log.d("selected time ", " " + selectedHour + ":" + selectedMinute);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+        calendar.set(Calendar.MINUTE, selectedMinute);
+        if (selectedHour < 12)
+            calendar.set(Calendar.AM_PM, Calendar.AM);
+        else {
+            calendar.set(Calendar.AM_PM, Calendar.PM);
+        }
 
+        Intent intent = new Intent(getApplicationContext(), NotificationReciever.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmManager.INTERVAL_DAY, pendingIntent);
+    }
 
     @Override
     public void onBackPressed() {
@@ -297,12 +318,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+               int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
         if (id == R.id.action_settings) {
             return true;
         }
@@ -310,7 +328,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-
+//Navigation Drawer
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -325,13 +343,41 @@ public class MainActivity extends AppCompatActivity
             Intent in4 = new Intent(MainActivity.this, Incompleted_tasks.class);
             MainActivity.this.startActivity(in4);
 
-        }
-        else if(id==R.id.abt_dev){
-            Intent in5=new Intent(MainActivity.this,About.class);
+        } else if (id == R.id.notif) {
+            final Calendar mcurrentTime = Calendar.getInstance();
+            int hour = mcurrentTime.get(Calendar.HOUR);
+            int minute = mcurrentTime.get(Calendar.MINUTE);
+
+            TimePickerDialog mTimePicker;
+            mTimePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                    setnotif(selectedHour, selectedMinute);
+
+                }
+            }, hour, minute, false);
+            mTimePicker.setTitle("Select Notification Time");
+            mTimePicker.show();
+
+
+        } else if (id == R.id.clr1) {
+            DatabaseOperations db = new DatabaseOperations(this);
+            db.delful1();
+        } else if (id == R.id.clr2) {
+            DatabaseOperations db = new DatabaseOperations(this);
+            db.delful2();
+        } else if (id == R.id.abt_dev) {
+            Intent in5 = new Intent(MainActivity.this, About.class);
             MainActivity.this.startActivity(in5);
         }
         return true;
     }
 
-
 }
+
+
+
+
+
+

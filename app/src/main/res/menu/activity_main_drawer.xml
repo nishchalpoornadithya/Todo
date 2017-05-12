@@ -15,10 +15,35 @@
 </menu>
         </item>
 
+        <item android:title="Notifications">
+        <menu>
+        <item
+
+            android:id="@+id/notif"
+            android:icon="@drawable/ic_action_dev"
+            android:title="Set Notificatications At" />
+
+        </menu>
+
+
+        </item>
+        <item android:title="Clear tasks">
+            <menu>
+        <item
+            android:id="@+id/clr1"
+            android:icon="@drawable/ic_action_dev"
+            android:title="Clear Completed Tasks" />
+        <item
+            android:id="@+id/clr2"
+            android:icon="@drawable/ic_action_dev"
+            android:title="Clear Incompleted Tasks" />
+
+</menu>
+        </item>
 
 
 
-    <item android:title="Communicate">
+        <item android:title="Communicate">
         <menu>
             <item
                 android:id="@+id/abt_dev"
@@ -26,7 +51,7 @@
                 android:title="About Developer" />
 
         </menu>
-    </item>
+        </item>
     </group>
 
 </menu>

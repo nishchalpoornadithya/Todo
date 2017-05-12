@@ -90,7 +90,7 @@ public class Incompleted_tasks extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(mRecyclerView1);
 
 
-
+db.close();
 
     }
 }
